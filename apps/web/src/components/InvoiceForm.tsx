@@ -3,8 +3,44 @@
 import { useState } from "react";
 import api from "@/lib/api";
 
-export default function InvoiceForm({ data, onChange, onSaved, onDeleted }) {
-  const [form, setForm] = useState({
+// -------------------- Types --------------------
+export type LineItem = {
+  description: string;
+  unitPrice: string;
+  quantity: string;
+  total: string;
+};
+
+export interface InvoiceData {
+  _id?: string;
+  vendor: {
+    name: string;
+    address: string;
+    taxId: string;
+  };
+  invoice: {
+    number: string;
+    date: string;
+    currency: string;
+    subtotal: string;
+    taxPercent: string;
+    total: string;
+    poNumber: string;
+    poDate: string;
+    lineItems: LineItem[];
+  };
+}
+
+type Props = {
+  data: InvoiceData;
+  onChange: (data: InvoiceData) => void;
+  onSaved: (saved: InvoiceData) => void;
+  onDeleted: () => void;
+};
+
+// -------------------- Component --------------------
+export default function InvoiceForm({ data, onChange, onSaved, onDeleted }: Props) {
+  const [form, setForm] = useState<InvoiceData>({
     _id: data?._id || "",
     vendor: {
       name: data?.vendor?.name || "",
@@ -24,11 +60,12 @@ export default function InvoiceForm({ data, onChange, onSaved, onDeleted }) {
     },
   });
 
-  const handleChange = (path: string, value: any) => {
+  // -------------------- Handlers --------------------
+  const handleChange = (path: string, value: string) => {
     const keys = path.split(".");
-    setForm((prev: any) => {
-      let updated = { ...prev, _id: prev._id };
-      let obj = updated;
+    setForm((prev) => {
+      const updated: InvoiceData = { ...prev, _id: prev._id };
+      let obj: any = updated; // temporary for deep access
       for (let i = 0; i < keys.length - 1; i++) {
         obj[keys[i]] = { ...obj[keys[i]] };
         obj = obj[keys[i]];
@@ -39,11 +76,11 @@ export default function InvoiceForm({ data, onChange, onSaved, onDeleted }) {
     });
   };
 
-  const handleLineItemChange = (index: number, field: string, value: string) => {
+  const handleLineItemChange = (index: number, field: keyof LineItem, value: string) => {
     const items = [...form.invoice.lineItems];
     items[index] = { ...items[index], [field]: value };
     setForm((prev) => {
-      const updated = {
+      const updated: InvoiceData = {
         ...prev,
         invoice: { ...prev.invoice, lineItems: items },
       };
@@ -53,31 +90,38 @@ export default function InvoiceForm({ data, onChange, onSaved, onDeleted }) {
   };
 
   const handleUpdate = async () => {
-    if (!data?._id) return alert("Invoice ID missing");
+    if (!data?._id) {
+      alert("Invoice ID missing");
+      return;
+    }
     try {
-      const res = await api.put(`/invoices/${data._id}`, form);
+      const res = await api.put<InvoiceData>(`/invoices/${data._id}`, form);
       onSaved(res.data);
       alert("Invoice updated successfully!");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Update error:", err);
       alert("Failed to update invoice");
     }
   };
 
   const handleDelete = async () => {
-    if (!data?._id) return alert("Invoice ID missing");
+    if (!data?._id) {
+      alert("Invoice ID missing");
+      return;
+    }
     if (!confirm("Are you sure you want to delete this invoice?")) return;
 
     try {
       await api.delete(`/invoices/${data._id}`);
       onDeleted();
       alert("Invoice deleted successfully!");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Delete error:", err);
       alert("Failed to delete invoice");
     }
   };
 
+  // -------------------- UI --------------------
   const inputClass =
     "border border-gray-600 rounded-xl p-5 text-xl focus:ring-2 focus:ring-sky-500 focus:outline-none bg-gray-800 text-gray-200 shadow-md";
 
@@ -161,7 +205,7 @@ export default function InvoiceForm({ data, onChange, onSaved, onDeleted }) {
 
       {/* Line Items Section */}
       <h3 className="font-bold text-3xl border-b border-gray-700 pb-3 mb-3">Line Items</h3>
-      {form.invoice.lineItems.map((item: any, idx: number) => (
+      {form.invoice.lineItems.map((item, idx) => (
         <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-4">
           <input
             value={item.description}

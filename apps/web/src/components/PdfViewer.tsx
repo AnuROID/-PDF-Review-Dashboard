@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
+import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import type { ViewerProps, WorkerProps } from "@react-pdf-viewer/core";
+
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
@@ -10,11 +12,24 @@ interface PDFViewerProps {
   file: File | string | null;
 }
 
+// ✅ Dynamically load Viewer
+const Viewer = dynamic<ViewerProps>(
+  () =>
+    import("@react-pdf-viewer/core").then((mod) => mod.Viewer as unknown as React.FC<ViewerProps>),
+  { ssr: false }
+);
+
+// ✅ Dynamically load Worker
+const Worker = dynamic<WorkerProps>(
+  () =>
+    import("@react-pdf-viewer/core").then((mod) => mod.Worker as unknown as React.FC<WorkerProps>),
+  { ssr: false }
+);
+
+
 const PDFViewer: React.FC<PDFViewerProps> = ({ file }) => {
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const [scale, setScale] = useState<number>(1);
-
-  // ✅ Initialize plugin once
   const pluginInstance = defaultLayoutPlugin();
 
   useEffect(() => {
@@ -22,11 +37,9 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file }) => {
       setObjectUrl(null);
       return;
     }
-
     if (file instanceof File) {
       const url = URL.createObjectURL(file);
       setObjectUrl(url);
-
       return () => URL.revokeObjectURL(url);
     } else {
       setObjectUrl(file);
@@ -63,14 +76,10 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file }) => {
         <div className="text-gray-400 text-lg">PDF Viewer</div>
       </div>
 
-      {/* PDF viewer */}
+      {/* PDF Viewer */}
       <div className="flex-1 p-2 overflow-auto bg-gray-900">
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
-          <Viewer
-            fileUrl={objectUrl}
-            plugins={[pluginInstance]}
-            defaultScale={scale}
-          />
+          <Viewer fileUrl={objectUrl} plugins={[pluginInstance]} defaultScale={scale} />
         </Worker>
       </div>
     </div>
