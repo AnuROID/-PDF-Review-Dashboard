@@ -1,3 +1,4 @@
+/* Force update for Vercel deployment */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,5 +15,5 @@ html, body, #__next {
 }
 
 section {
-  overflow: auto; /* only sections scroll */
+  overflow: auto;
 }
