@@ -1,11 +1,14 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+interface MyNextConfig extends NextConfig {
+  experimental?: NextConfig["experimental"] & { turbo?: boolean };
+}
+
+const nextConfig: MyNextConfig = {
   experimental: {
-    turbo: false, // disable Turbopack
+    turbo: false, // now TypeScript is happy
   },
   webpack: (config) => {
-    // Ignore 'canvas' during server-side builds
     config.resolve.fallback = {
       ...config.resolve.fallback,
       canvas: false,
