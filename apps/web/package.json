@@ -2,32 +2,34 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
-"scripts": {
-  "dev": "next dev",
-  "build": "next build", 
-  "start": "next start"
-},
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
   "dependencies": {
     "@react-pdf-viewer/core": "^3.12.0",
     "@react-pdf-viewer/default-layout": "^3.12.0",
     "@tanstack/react-query": "^5.87.1",
     "axios": "^1.11.0",
-    "canvas": "^3.2.0",
     "next": "15.5.2",
     "pdfjs-dist": "^2.16.105",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.13",
     "@types/node": "^20",
     "@types/pdfjs-dist": "^2.10.377",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/webpack": "^5.28.5",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5",
+    "webpack": "^5.101.3"
   }
 }

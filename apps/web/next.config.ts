@@ -1,18 +1,18 @@
-// Force update for Vercel deployment
 import type { NextConfig } from "next";
+import type { Configuration } from "webpack";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    turbo: false,
-  },
-  webpack: (config, { isServer }) => {
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      canvas: false,
-    };
+  reactStrictMode: true,
+  webpack: (config: Configuration, { isServer }: { isServer: boolean }) => {
+    if (isServer) {
+      config.resolve = config.resolve || {};
+      config.resolve.fallback = {
+        ...(config.resolve.fallback || {}),
+        canvas: false, // fix pdfjs-dist build error
+      };
+    }
     return config;
   },
-  unstable_disableTurbopack: true,
 };
 
 export default nextConfig;

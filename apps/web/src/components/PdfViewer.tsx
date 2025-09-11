@@ -1,10 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+import { useState, useEffect } from "react";
+import { Worker, Viewer } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import type { ViewerProps, WorkerProps } from "@react-pdf-viewer/core";
-
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
@@ -12,31 +10,15 @@ interface PDFViewerProps {
   file: File | string | null;
 }
 
-// ✅ Dynamically load Viewer
-const Viewer = dynamic<ViewerProps>(
-  () =>
-    import("@react-pdf-viewer/core").then((mod) => mod.Viewer as unknown as React.FC<ViewerProps>),
-  { ssr: false }
-);
-
-// ✅ Dynamically load Worker
-const Worker = dynamic<WorkerProps>(
-  () =>
-    import("@react-pdf-viewer/core").then((mod) => mod.Worker as unknown as React.FC<WorkerProps>),
-  { ssr: false }
-);
-
-
-const PDFViewer: React.FC<PDFViewerProps> = ({ file }) => {
+export default function PDFViewer({ file }: PDFViewerProps) {
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
-  const [scale, setScale] = useState<number>(1);
+  const [scale, setScale] = useState(1);
+
   const pluginInstance = defaultLayoutPlugin();
 
   useEffect(() => {
-    if (!file) {
-      setObjectUrl(null);
-      return;
-    }
+    if (!file) return setObjectUrl(null);
+
     if (file instanceof File) {
       const url = URL.createObjectURL(file);
       setObjectUrl(url);
@@ -45,6 +27,8 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file }) => {
       setObjectUrl(file);
     }
   }, [file]);
+
+  if (typeof window === "undefined") return null; // Prevent server rendering
 
   if (!objectUrl) {
     return (
@@ -56,34 +40,19 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ file }) => {
 
   return (
     <div className="flex flex-col h-full bg-gray-900 text-white border border-gray-700 rounded-lg overflow-hidden shadow-md">
-      {/* Header with zoom controls */}
       <div className="flex items-center justify-between p-2 bg-gray-800 border-b border-gray-700">
         <div className="flex items-center gap-2">
-          <button
-            className="px-3 py-1 rounded-md bg-sky-600 text-white hover:bg-sky-700"
-            onClick={() => setScale((s) => Math.max(0.5, s - 0.25))}
-          >
-            -
-          </button>
-          <span className="font-medium">{Math.round(scale * 100)}%</span>
-          <button
-            className="px-3 py-1 rounded-md bg-sky-600 text-white hover:bg-sky-700"
-            onClick={() => setScale((s) => Math.min(3, s + 0.25))}
-          >
-            +
-          </button>
+          <button onClick={() => setScale((s) => Math.max(0.5, s - 0.25))}>-</button>
+          <span>{Math.round(scale * 100)}%</span>
+          <button onClick={() => setScale((s) => Math.min(3, s + 0.25))}>+</button>
         </div>
-        <div className="text-gray-400 text-lg">PDF Viewer</div>
       </div>
 
-      {/* PDF Viewer */}
-      <div className="flex-1 p-2 overflow-auto bg-gray-900">
-        <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
-          <Viewer fileUrl={objectUrl} plugins={[pluginInstance]} defaultScale={scale} />
-        </Worker>
+      <div className="h-full w-full">
+       <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
+  <Viewer fileUrl={objectUrl} plugins={[pluginInstance]} />
+</Worker>
       </div>
     </div>
   );
-};
-
-export default PDFViewer;
+}

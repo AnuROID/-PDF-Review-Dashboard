@@ -1,8 +1,6 @@
-// apps/web/src/lib/api.ts
 import axios from "axios";
 
-console.log("API Base URL:", process.env.NEXT_PUBLIC_API_URL);
-
+// Make sure NEXT_PUBLIC_API_URL is set in your .env for deployment
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000",
 });
