@@ -4,11 +4,11 @@
   "private": true,
 "scripts": {
   "dev": "next dev",
-  "build": "next build --no-turbo", 
+  "build": "next build --no-turbo",
+  "vercel-build": "next build --no-turbo", 
   "start": "next start",
   "lint": "eslint"
-}
-,
+},
   "dependencies": {
     "@react-pdf-viewer/core": "^3.12.0",
     "@react-pdf-viewer/default-layout": "^3.12.0",
