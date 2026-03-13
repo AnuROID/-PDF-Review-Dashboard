@@ -1,98 +1,207 @@
-📄 PDF Review Dashboard
+# 📄 PDF Review Dashboard
 
-A full-stack monorepo project for uploading, viewing, extracting, editing, and managing invoice PDFs. Built with Next.js, Express.js, MongoDB (GridFS), and Gemini/Groq AI API.
+A full-stack **monorepo application** for uploading, viewing, extracting, editing, and managing invoice PDFs.
 
-🚀 Project Structure
+The system uses **AI to extract invoice data automatically** and stores files using **MongoDB GridFS**.
+
+## 🚀 Tech Stack
+
+**Frontend**
+
+* Next.js
+* TailwindCSS
+* TypeScript
+
+**Backend**
+
+* Node.js
+* Express.js
+* MongoDB (GridFS)
+* Gemini / Groq AI APIs
+
+---
+
+## 📁 Project Structure
+
+```
 apps/
-  web/   → Frontend (Next.js + TailwindCSS)
-  api/   → Backend (Express + MongoDB + GridFS + AI extraction)
+ ├── web/   → Frontend (Next.js + TailwindCSS)
+ └── api/   → Backend (Express.js + MongoDB + GridFS + AI extraction)
+```
 
-🔗 Deployed Links
+---
 
-Frontend (Web): https://<project>-web.vercel.app
+## 🔗 Deployed Links
 
-Backend (API): https://<project>-api.vercel.app
+Frontend:
+https://your-web-url.vercel.app
 
-⚙️ Setup Instructions
-1️⃣ Clone the repo
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
+Backend API:
+https://your-api-url.vercel.app
 
-2️⃣ Install dependencies
+---
+
+## ⚙️ Setup Instructions
+
+### 1️⃣ Clone the Repository
+
+```
+git clone https://github.com/your-username/pdf-review-dashboard.git
+cd pdf-review-dashboard
+```
+
+### 2️⃣ Install Dependencies
+
+```
 npm install
+```
 
-3️⃣ Environment variables
+---
 
-Create .env files in both apps/web and apps/api.
+### 3️⃣ Environment Variables
 
-apps/api/.env
+Create `.env` files inside both **apps/api** and **apps/web**.
+
+#### apps/api/.env
+
+```
 PORT=4000
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/pdf-dashboard
-GEMINI_API_KEY=your_gemini_api_key_here
+MONGODB_URI=your_mongodb_connection_string
+GEMINI_API_KEY=your_gemini_api_key
 # OR
-GROQ_API_KEY=your_groq_api_key_here
+GROQ_API_KEY=your_groq_api_key
+```
 
-apps/web/.env
-NEXT_PUBLIC_API_URL=https://<project>-api.vercel.app
+#### apps/web/.env
 
-4️⃣ Run locally
-Backend
+```
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+---
+
+### 4️⃣ Run the Application
+
+#### Start Backend
+
+```
 cd apps/api
 npm run dev
+```
 
+Backend runs at:
 
-API runs at: http://localhost:4000
+```
+http://localhost:4000
+```
 
-Frontend
+---
+
+#### Start Frontend
+
+```
 cd apps/web
 npm run dev
+```
 
+Frontend runs at:
 
-Frontend runs at: http://localhost:3000
+```
+http://localhost:3000
+```
 
-📡 API Documentation
-POST /upload
+---
+
+## 📡 API Documentation
+
+### POST /upload
 
 Upload a PDF file.
 
-Request: multipart/form-data with file field.
+**Request**
 
-Response:
+multipart/form-data with field `file`.
 
+**Response**
+
+```
 {
-  "message": "File uploaded and invoice created",
-  "fileId": "<gridfs_id>",
-  "fileName": "invoice.pdf",
-  "invoiceId": "<mongo_id>"
+ "message": "File uploaded and invoice created",
+ "fileId": "<gridfs_id>",
+ "fileName": "invoice.pdf",
+ "invoiceId": "<mongo_id>"
 }
+```
 
-POST /extract/:id
+---
 
-Run AI extraction on uploaded PDF.
+### POST /extract/:id
 
-Params: id (invoiceId)
+Run AI extraction on the uploaded PDF.
 
-Response:
+**Params**
 
+```
+id → invoiceId
+```
+
+**Response**
+
+```
 {
-  "vendor": { "name": "ABC Corp", "address": "123 Main St" },
-  "invoiceNumber": "INV-001",
-  "date": "2025-09-10",
-  "items": [{ "description": "Service", "amount": 100 }]
+ "vendor": {
+   "name": "ABC Corp",
+   "address": "123 Main St"
+ },
+ "invoiceNumber": "INV-001",
+ "date": "2025-09-10",
+ "items": [
+   {
+     "description": "Service",
+     "amount": 100
+   }
+ ]
 }
+```
 
-GET /invoices
+---
+
+### GET /invoices
 
 Fetch all invoices.
 
-GET /invoices/:id
+---
 
-Fetch a single invoice.
+### GET /invoices/:id
 
-PUT /invoices/:id
+Fetch a specific invoice.
+
+---
+
+### PUT /invoices/:id
 
 Update invoice fields.
 
-DELETE /invoices/:id
+---
 
-Delete invoice.
+### DELETE /invoices/:id
+
+Delete an invoice.
+
+---
+
+## ✨ Features
+
+* Upload invoice PDFs
+* AI-based invoice data extraction
+* View and edit extracted data
+* Store PDFs using MongoDB GridFS
+* RESTful API for invoice management
+
+---
+
+## 👨‍💻 Author
+
+**Anurag Sharma**
+
+B.Tech CSE | Full Stack Developer
